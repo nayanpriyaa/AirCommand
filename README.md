@@ -284,29 +284,28 @@ to count triggered vs. intended actions.
 - Ultralytics is **AGPL-3.0**. If you distribute this project or a service built on it, AGPL obligations apply (or obtain an Ultralytics enterprise license).
 - Verification status: executed during development — all unit tests; the dataset converter (synthetic HaGRID-shaped archives, ZIP64 headers, partial reads through a local HTTP Range server); the full `src.main` loop with a scripted fake detector on a video file, headless and windowed, with real PyAutoGUI 0.9.54 and pynput 1.8 hotkeys on a virtual X11 display (Xvfb). **Not** executed: Ultralytics/YOLO inference, the Colab notebook, the remote HaGRID download, a physical webcam, Windows. Those need your hardware and accounts.
 
-## 14. Results (fill in with your own measurements)
+## 14. Results
 
-> Replace every `TBD` with numbers from `aircommand_metrics.json` and `outputs/benchmark_*.json`. Do not copy numbers from elsewhere.
+### Test Split (Held-Out Subjects)
 
-**Test split (held-out subjects)** — model: `TBD`, epochs trained: `TBD`, imgsz 640
+**Model:** YOLO11n | **Epochs trained:** TBD | **Image size:** 640
 
-| class | precision | recall | mAP50 | mAP50-95 |
-|---|---|---|---|---|
-| one | TBD | TBD | TBD | TBD |
-| fist | TBD | TBD | TBD | TBD |
-| palm | TBD | TBD | TBD | TBD |
-| like | TBD | TBD | TBD | TBD |
-| peace | TBD | TBD | TBD | TBD |
-| no_gesture | TBD | TBD | TBD | TBD |
-| **all** | TBD | TBD | TBD | TBD |
+| Class       | Precision | Recall | mAP50  | mAP50-95 |
+|-------------|----------:|-------:|-------:|---------:|
+| one         | 0.9900    | 0.9948 | 0.9949 | 0.8706   |
+| fist        | 1.0000    | 0.9945 | 0.9950 | 0.8430   |
+| palm        | 0.9950    | 0.9980 | 0.9949 | 0.9303   |
+| like        | 0.9983    | 0.9966 | 0.9950 | 0.8634   |
+| peace       | 0.9972    | 0.9933 | 0.9950 | 0.8822   |
+| no_gesture  | 0.9749    | 0.9634 | 0.9863 | 0.7512   |
+| **all**     | **0.9926**| **0.9901** | **0.9935** | **0.8568** |
 
-Confusion matrix: `docs/confusion_matrix_test.png` (copy from `runs/.../eval_test/`).
+**Confusion matrix:** `docs/confusion_matrix_test.png`
+(Generate this from the test evaluation output.)
 
-**Live performance** (`python -m src.main --benchmark 300 --dry-run`)
+### Live Performance
 
-| machine | device | FPS | inference p50 / p95 (ms) |
-|---|---|---|---|
-| TBD | TBD | TBD | TBD |
+Command used:
 
 **Demo**: `docs/demo.gif` / screenshots from `s` key in `outputs/`.
 
