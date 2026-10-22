@@ -1,0 +1,82 @@
+# AirCommand runtime configuration.
+# Relative paths are resolved against the repository root, not the current directory.
+# Every key is validated at startup; unknown keys are rejected so typos fail loudly.
+
+model:
+  path: models/best.pt
+  # MUST match the class order used in training (training/dataset_setup.py writes the
+  # same list into data.yaml). The detector refuses to start if the weights disagree.
+  classes: [one, fist, palm, like, peace, no_gesture]
+  confidence: 0.55          # global minimum detection confidence
+  per_class_conf:           # stricter thresholds for classes that trigger discrete actions
+    fist: 0.60
+    peace: 0.65
+    like: 0.65
+  iou: 0.50
+  imgsz: 640                # must be a multiple of 32; 640 matches training
+  device: auto              # auto | cpu | 0 (first CUDA GPU) | mps
+
+camera:
+  index: 0
+  width: 640
+  height: 480
+  fps: 30
+  mirror: true              # flip horizontally so moving your hand right moves the cursor right
+  backend: auto             # auto | dshow | msmf | v4l2 | any
+  threaded: true            # always process the newest frame (lower latency)
+
+roles:                      # which trained class drives which behaviour
+  pointer: one              # index finger up -> move cursor
+  click: fist               # pointer -> fist held -> single left click
+  right_click: peace        # held -> single right click (set to null to disable)
+  swipe: palm               # open palm moved quickly sideways -> previous/next slide
+  toggle: like              # thumbs-up held -> disarm (and arm, only if allow_gesture_arming)
+  neutral: no_gesture       # detected hand doing nothing; never triggers actions
+
+smoothing:
+  window: 5                 # frames in the majority-vote window
+  min_votes: 3              # votes needed to become the stable gesture (must be > window/2)
+  track_max_dist: 0.20      # max normalized jump to keep following the same hand
+
+cursor:
+  active_region: [0.20, 0.15, 0.80, 0.75]  # x1, y1, x2, y2 of the frame mapped onto the screen
+  sensitivity: 1.0          # >1 shrinks the active region (less hand travel per screen width)
+  anchor_y: 0.18            # fingertip estimate: fraction of box height below the box top
+  min_cutoff: 1.2           # One Euro filter: lower = smoother but laggier at rest
+  beta: 0.012               # One Euro filter: higher = less lag during fast motion
+  d_cutoff: 1.0
+  deadzone_px: 4            # ignore jitter smaller than this many screen pixels
+  edge_margin_px: 8         # never drive the cursor into a PyAutoGUI fail-safe corner
+
+actions:
+  click_hold_s: 0.25        # fist must be stable this long before clicking
+  right_click_hold_s: 0.45
+  click_cooldown_s: 0.70    # minimum time between two clicks
+  click_requires_pointer_context: true   # fist only clicks if pointer was used just before
+  pointer_context_s: 1.2
+  toggle_hold_s: 1.5
+  toggle_cooldown_s: 2.5
+
+swipe:
+  enabled: true
+  window_s: 0.55            # motion must happen within this time
+  min_dx: 0.22              # minimum horizontal travel, fraction of frame width
+  max_dy_ratio: 0.6         # |dy| must stay below this fraction of |dx|
+  min_points: 4             # palm detections required inside the window
+  monotonic_ratio: 0.7      # fraction of steps that must move in the swipe direction
+  cooldown_s: 1.0
+  left_key: right           # hand moves left  -> Right arrow (next slide)
+  right_key: left           # hand moves right -> Left arrow (previous slide)
+
+safety:
+  arm_grace_s: 0.75         # after arming, ignore gestures briefly
+  allow_gesture_arming: false   # thumbs-up can always DISARM; arming by gesture is opt-in
+  max_discrete_actions_per_s: 3 # hard cap on clicks + key presses
+  idle_disarm_s: 120        # disarm after this long without a hand (0 disables)
+  global_hotkeys: true      # Esc/F8/F9 work even when the preview window is not focused
+  pyautogui_failsafe: true  # slam the real mouse into a screen corner = emergency stop
+
+ui:
+  window_name: AirCommand
+  show_help: true
+  always_on_top: true       # best effort; supported on some OpenCV GUI backends only

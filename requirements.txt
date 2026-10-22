@@ -1,0 +1,8 @@
+# Local runtime (inference + desktop control). Python 3.10-3.12 recommended.
+# Ultralytics range must match the Colab notebook so best.pt loads (YOLO11 needs >=8.3.0).
+ultralytics>=8.3.0,<8.5.0
+opencv-python>=4.9.0
+numpy>=1.26,<3
+PyYAML>=6.0
+pyautogui==0.9.54
+pynput>=1.7.6,<1.9

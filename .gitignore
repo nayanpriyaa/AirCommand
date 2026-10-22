@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+env/
+
+# Data and weights (large; distribute separately)
+datasets/
+models/*.pt
+models/*.onnx
+runs/
+*.part
+
+# Runtime outputs
+outputs/*
+!outputs/.gitkeep
+
+# Notebooks / IDE / OS
+.ipynb_checkpoints/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
